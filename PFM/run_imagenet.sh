@@ -1,0 +1,1 @@
+python imagenet_experiments.py --device cuda:0 --config imagenet_resnet50 --save_dir pfm_results/imagenet/ --pair 1_2

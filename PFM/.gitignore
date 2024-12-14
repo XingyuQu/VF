@@ -1,0 +1,11 @@
+__pycache__/
+data/
+*.pt
+*.png
+*.csv
+*.pth
+*.pdf
+*.onnx
+*.jpg
+*.json
+*.h5

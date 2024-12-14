@@ -1,0 +1,16 @@
+coloredlogs==15.0.1
+prettytable==3.9.0
+wandb==0.14.0
+ffcv
+pyyaml 
+scikit-learn
+fvcore 
+einops 
+networkx 
+timm      
+pygraphviz
+tqdm
+matplotlib
+numpy==1.23.4
+pandas==1.5.3
+torchstat==0.0.7 
