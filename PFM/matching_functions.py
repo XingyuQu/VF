@@ -193,7 +193,7 @@ def match_tensors_permute(metric, r=.5, get_merge_value=False, add_bias=False, *
     N = int(1/(1 - r) + 0.5)
     Om = O // N
     device = correlation.device
-    
+
     mats = [torch.eye(Om, device=device)]
     # mats = [torch.zeros(Om, Om, device=device)]
     for i in range(1, N):
@@ -203,7 +203,7 @@ def match_tensors_permute(metric, r=.5, get_merge_value=False, add_bias=False, *
         except:
             pdb.set_trace()
         mats.append(torch.eye(Om, device=device)[torch.tensor(col_ind).long().to(device)].T)
-    
+
     if add_bias:
         unmerge_mats = add_bias_to_mats(mats)
     else:
@@ -215,6 +215,52 @@ def match_tensors_permute(metric, r=.5, get_merge_value=False, add_bias=False, *
     if get_merge_value:
         merge_value = correlation[:Om, Om*i:Om*(i+1)].cpu().numpy()[row_ind, col_ind].mean()
         return merge.T, unmerge, merge_value
+    return merge.T, unmerge
+
+
+def match_tensors_cca(metric, reduce_ratio=.5, get_merge_value=False, add_bias=False, gamma=0.1, **kwargs):
+    """
+    Matches arbitrary models by CCA. Transforms all models to the space of the first one.
+    """
+    covariance = metric["covariance"]
+    num_features = covariance.shape[0]
+
+    num_models = int(1/(1 - reduce_ratio) + 0.5)
+    Om = num_features // num_models
+    device = covariance.device
+
+    mats = [torch.eye(Om, device=device)]
+    unmerge_mats = [torch.eye(Om, device=device)]
+
+    for i in range(1, num_models):
+        try:
+            S_xx = covariance[:Om, :Om] + gamma*torch.eye(Om, device=device)
+            S_yy = covariance[Om*i:Om*(i+1), Om*i:Om*(i+1)] + gamma*torch.eye(Om, device=device)
+            S_xy = covariance[:Om, Om*i:Om*(i+1)]
+
+            S_xx_U, S_xx_S, S_xx_V = torch.svd(S_xx)
+            S_xx_sqrt = S_xx_U @ torch.diag(S_xx_S**(1/2)) @ S_xx_V.T
+            S_xx_neg_sqrt = S_xx_U @ torch.diag(S_xx_S**(-1/2)) @ S_xx_V.T
+
+            S_yy_U, S_yy_S, S_yy_V = torch.svd(S_yy)
+            S_yy_sqrt = S_yy_U @ torch.diag(S_yy_S**(1/2)) @ S_yy_V.T
+            S_yy_neg_sqrt = S_yy_U @ torch.diag(S_yy_S**(-1/2)) @ S_yy_V.T
+
+            U, S, V = torch.svd(S_xx_neg_sqrt @ S_xy @ S_yy_neg_sqrt)
+
+            y_map = S_yy_neg_sqrt @ V @ U.T @ S_xx_sqrt.T
+            y_unmerge_map = S_xx_neg_sqrt @ U @ V.T @ S_yy_sqrt.T
+
+        except RuntimeWarning:
+            pdb.set_trace()
+
+        mats.append(y_map)
+        unmerge_mats.append(y_unmerge_map.T)
+
+    unmerge = torch.cat(unmerge_mats, dim=0)
+    merge = torch.cat(mats, dim=0)
+    merge = merge / num_models
+
     return merge.T, unmerge
 
 
