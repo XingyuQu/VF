@@ -247,7 +247,7 @@ def main():
 
                 # rescale
                 Merge.merged_model = deepcopy(merged_model_backup)
-                repaired_merged_model = repair(train_loader, base_models,
+                repaired_merged_model = repair(train_loader, base_model_merge_s,
                                             Merge.merged_model, device,
                                             name=config['model']['name'], variant='rescale',
                                             reset_bn=False) # reset bn in merger

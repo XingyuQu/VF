@@ -75,6 +75,7 @@ def main():
     parser.add_argument('--save_dir', type=str, default='pfm_results/')
     parser.add_argument('--pair', type=str, default='1_2')
     parser.add_argument('--test', action='store_true')
+    parser.add_argument('--one_ref_stats', action='store_true', help='use statistics from only one reference model for repair/rescale')
     args = parser.parse_args()
     
     print("New experiment")
@@ -200,14 +201,17 @@ def main():
                 res_dict[merging_fn]['reset']['loss'].append(reset_loss)
                 res_dict[merging_fn]['reset']['acc'].append(reset_acc)
             else:
-                # permute the models 
-                print("---Permuting the models---")
-                graphs = Merge.graphs
-                base_model_merge_s = [deepcopy(graph.model) for graph in graphs]
-                # remove all hooks from the model
-                for model in base_model_merge_s:
-                    model._forward_hooks = {}
-                    model._backward_hooks = {}
+                if not args.one_ref_stats:
+                    # permute the models 
+                    print("---Permuting the models---")
+                    graphs = Merge.graphs
+                    base_model_merge_s = [deepcopy(graph.model) for graph in graphs]
+                    # remove all hooks from the model
+                    for model in base_model_merge_s:
+                        model._forward_hooks = {}
+                        model._backward_hooks = {}
+                else:
+                    base_model_merge_s = [deepcopy(base_models[0])]
 
                 ### bias correction ###
                 Merge.merged_model = deepcopy(merged_model_backup)
@@ -246,7 +250,7 @@ def main():
 
                 # rescale
                 Merge.merged_model = deepcopy(merged_model_backup)
-                repaired_merged_model = repair(train_loader, base_models,
+                repaired_merged_model = repair(train_loader, base_model_merge_s,
                                             Merge.merged_model, device,
                                             name=config['model']['name'], variant='rescale',
                                             reset_bn=False) # reset bn in merger
