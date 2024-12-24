@@ -11,7 +11,7 @@ pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --e
 pip install -r requirements.txt
 ```
 
-The current code for preserve-first merging (PFM) and pruning are adapted from [ZipIt!](https://github.com/gstoica27/ZipIt) and [WoodFisher](https://github.com/IST-DASLab/WoodFisher), which might bring some inconvenience for further research. We plan to release a improved version in the future.
+The current code for preserve-first merging (PFM) and pruning are adapted from [ZipIt!](https://github.com/gstoica27/ZipIt) and [WoodFisher](https://github.com/IST-DASLab/WoodFisher), which might bring some inconvenience for further research. We plan to release a improved version in the future. For the CCA merging experiments, since the [code](https://github.com/shoroi/align-n-merge) is also adapted from ZipIt!, their implementation of the matching algorithm is directly plugged into our code in the `PFM/matching_functions.py` file.
 
 All the dependencies in ZipIt! code are already included in the above installation, while addiontal setup needs for our code in `WoodFisher/`. Please refer `WoodFisher/README.md` for deatails.
 
@@ -29,9 +29,10 @@ All the dependencies in ZipIt! code are already included in the above installati
 * `PFM/` is adapted from [ZipIt!](https://github.com/gstoica27/ZipIt), containing code to reproduce the evaluations of our prevew-first merging (PFM) framework. A complete description of the ZipIt! code can be found in the orignal repo.
   * `PFM/run_cifar.sh` is the bash script to run PFM experiments on CIFAR datasets.
   * `PFM/run_imagenet.sh` is the bash script to run PFM experiments on ImageNet dataset.
+  * `PFM/run_cifar_cca.sh` is the bash script to run PFM experiments with CCA merging.
   * `PFM/visualize_results.ipynb` is the notebook to visualize the results after running the PFM experiments.
   * `PFM/calculate_params_flops.ipynb` contains the code to calculate the number of parameters and FLOPs of the models.
-  * `get_zipit_premuted_models.ipynb` is used to get and save permuted models after applying ZipIt!. These models are then used for evaluating the performances of normalization methods, as shown in `main_noteooks/improve_normalization_from_vf.ipynb`.
+  * `PFM/get_zipit_premuted_models.ipynb` is used to get and save permuted models after applying ZipIt!. These models are then used for evaluating the performances of normalization methods, as shown in `main_noteooks/improve_normalization_from_vf.ipynb`.
 
 * `WoodFisher/` is adapted from [WoodFisher](https://github.com/IST-DASLab/WoodFisher) for pruning experiemnts. A complete description of the repo can be found there.
   * `WoodFisher/main.py` is the main file to run pruning from.

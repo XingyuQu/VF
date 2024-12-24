@@ -217,7 +217,7 @@ def match_tensors_permute(metric, r=.5, get_merge_value=False, add_bias=False, *
         return merge.T, unmerge, merge_value
     return merge.T, unmerge
 
-
+# Adapted from https://github.com/shoroi/align-n-merge/blob/main/core/matching_functions.py
 def match_tensors_cca(metric, reduce_ratio=.5, get_merge_value=False, add_bias=False, gamma=0.1, **kwargs):
     """
     Matches arbitrary models by CCA. Transforms all models to the space of the first one.
