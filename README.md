@@ -1,6 +1,6 @@
 # Vanishing Feature: Diagnosing Model Merging and Beyond
 
-This repository contains PyTorch implementation for results presented in the paper: *Vanishing Feature: Diagnosing Model Merging and Beyond*.
+This repository contains PyTorch implementation for results presented in the paper: [*Vanishing Feature: Diagnosing Model Merging and Beyond*](https://arxiv.org/abs/2402.05966).
 
 Setup the environment by running:
 ```bash
@@ -99,5 +99,10 @@ The setup for the WoodFisher repo can be found in `WoodFisher/README.md`.
 This codebase corresponds to the paper: *Vanishing Feature: Diagnosing Model Merging and Beyond*. If you use any of the code or provided models for your research, please consider citing the paper as
 
 ```bibtex
-TODO
+@article{qu2024vanishing,
+  title={Vanishing Feature: Diagnosing Model Merging and Beyond},
+  author={Qu, Xingyu and Horvath, Samuel},
+  journal={arXiv preprint arXiv:2402.05966},
+  year={2024}
+}
 ```
